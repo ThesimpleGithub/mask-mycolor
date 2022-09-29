@@ -1,0 +1,38 @@
+{
+  "name": "mycolor-mask",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "homepage": "https://github.com/ThesimpleGithub/mask-mycolor",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "deploy": "gh-pages -d dist",
+    "predeploy": "npm run build && cp CNAME dist",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tensorflow-models/face-landmarks-detection": "^0.0.1",
+    "@tensorflow/tfjs-backend-webgl": "^2.4.0",
+    "@tensorflow/tfjs-converter": "^2.4.0",
+    "@tensorflow/tfjs-core": "^2.4.0",
+    "axios": "0.27.2",
+    "exif-js": "2.3.0",
+    "gh-pages": "4.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "4.4.0",
+    "react-slick": "0.29.0",
+    "slick-carousel": "1.8.1",
+    "styled-components": "5.3.5"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "@types/react-slick": "0.23.10",
+    "@types/styled-components": "5.1.26",
+    "@vitejs/plugin-react": "^2.1.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0"
+  }
+}
