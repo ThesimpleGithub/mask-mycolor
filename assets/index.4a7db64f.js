@@ -8529,7 +8529,7 @@ Error generating stack: `+i.message+`
   height: 100vh;
   width: 100vw;
   flex-direction: column;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: center;
 `,HF=ye.button`
   background-color: #db4c64;
