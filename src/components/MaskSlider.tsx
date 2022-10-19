@@ -1,14 +1,13 @@
 import { useEffect, ReactElement, useState } from 'react';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick-theme.css';
-import 'slick-carousel/slick/slick.css';
 import MaskComponent from './MaskComponent';
 import styled from 'styled-components';
 import { maskObj, maskType } from '../datas/maskData';
+import ScrollContainer from 'react-indiana-drag-scroll';
+import { useRef } from 'react';
 
 interface props {
   maskDataArr: maskType[];
-  handleChangeMaskData(arg0: string): void;
+  handleChangeMaskData(arg0: number): void;
   handleChangeMask(arg0: number): void;
   selectedMask: maskType;
 }
@@ -21,25 +20,26 @@ const MaskSlider = ({
 }: props): ReactElement => {
   const [slideUnit, setSlideUnit] = useState<number>();
 
-  const settings = {
-    className: 'center',
-    infinite: false,
+  const menuElemArr = useRef<HTMLButtonElement[]>([]);
+  const isNeedScroll = useRef<boolean>(false);
+  const scrollX = useRef<number>(0);
 
-    slidesToShow: slideUnit,
-    swipeToSlide: true,
-    speed: 200,
-  };
-
+  const ScrollDiv = styled(ScrollContainer)`
+    white-space: nowrap;
+  `;
   const Div = styled.article`
     transition: all 0.5s ease;
     width: 100vw;
     background-color: white;
     z-index: 100003;
     position: relative;
-    overflow-x: scroll;
     padding: 0px 20px;
-    padding-top: 15px;
     max-width: 900px;
+    padding-top: 15px;
+    @media (orientation: portrait) and (max-width: 720px),
+      (orientation: landscape) and (max-height: 720px) {
+      padding-top: 2vmin;
+    }
   `;
   const MenuSpan = styled.button<{ isSelected: boolean }>`
     border-radius: 16px;
@@ -49,9 +49,10 @@ const MaskSlider = ({
     margin-right: 10px;
     border: 1px solid black;
     font-size: 18px;
-    @media (max-width: 720px) {
-      font-size: 2.5vw;
-      border-radius: 3vw;
+    @media (orientation: portrait) and (max-width: 720px),
+      (orientation: landscape) and (max-height: 720px) {
+      font-size: 2.5vmin;
+      border-radius: 3vmin;
     }
   `;
 
@@ -64,24 +65,50 @@ const MaskSlider = ({
       else setSlideUnit(window.innerWidth / (window.innerWidth * 0.25));
     });
   }, []);
+  useEffect(() => {
+    const selectedIdx = maskObj.findIndex(value => value.list == maskDataArr);
+    const selectedElem = menuElemArr.current[selectedIdx];
+    if (isNeedScroll.current)
+      selectedElem.scrollIntoView({
+        block: 'nearest',
+        inline: 'center',
+      });
+    else selectedElem.parentElement!.scrollTo(scrollX.current, 0);
+  }, [maskDataArr]);
 
-  console.log(maskDataArr);
-  console.log(selectedMask);
+  const handleMenuClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    idx: number,
+  ) => {
+    const selectedElem = e.currentTarget;
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(i => {
+        if (i.intersectionRatio < 1) isNeedScroll.current = true;
+        else {
+          isNeedScroll.current = false;
+          scrollX.current = i.target.parentElement!.scrollLeft;
+        }
+        handleChangeMaskData(idx);
+        observer.disconnect();
+      });
+    });
+    observer.observe(selectedElem);
+  };
+
   return (
     <Div>
-      <div>
-        {Object.keys(maskObj).map(type => (
+      <ScrollDiv>
+        {maskObj.map((obj, idx) => (
           <MenuSpan
-            onClick={() => {
-              handleChangeMaskData(type);
-            }}
-            isSelected={maskObj[type] == maskDataArr}
+            ref={el => (menuElemArr.current[idx] = el!)}
+            onClick={e => handleMenuClick(e, idx)}
+            isSelected={maskObj[idx].list == maskDataArr}
           >
-            {type}
+            {obj.name}
           </MenuSpan>
         ))}
-      </div>
-      <Slider {...settings}>
+      </ScrollDiv>
+      <ScrollDiv>
         {maskDataArr.map((maskData: maskType, idx: number) => {
           return (
             <MaskComponent
@@ -93,7 +120,7 @@ const MaskSlider = ({
             />
           );
         })}
-      </Slider>
+      </ScrollDiv>
       {/* <Slide>
         {maskDataArr.map((maskData: maskType, idx: number) => {
           return (

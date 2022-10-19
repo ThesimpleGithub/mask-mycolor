@@ -38,6 +38,7 @@ button{
 body {
   margin: 0;
   padding : 0;
+  font-size: 10px;
   font-weight: 500;
   padding-right : 0px !important;
   -webkit-font-smoothing: antialiased;

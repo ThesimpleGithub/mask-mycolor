@@ -17,7 +17,6 @@ export default class drawMask extends drawParent {
   }
 
   setMaskImage(mask: maskType) {
-    console.log(mask.left);
     this.leftMask.src = `/images/${mask.left}`;
     this.rightMask.src = `/images/${mask.right}`;
   }
@@ -60,24 +59,30 @@ export default class drawMask extends drawParent {
 
     if (this.shortWidth) {
       leftFaceWidth =
-        -Math.sqrt(
-          Math.pow(Math.abs(positions[234][0] - faceCenterPos[0]), 2) +
-            Math.pow(Math.abs(positions[234][1] - faceCenterPos[1]), 2),
-        ) * 1.1; //왼쪽 볼 넓이
+        // -Math.sqrt(
+        //   Math.pow(Math.abs(positions[234][0] - faceCenterPos[0]), 2) +
+        //     Math.pow(Math.abs(positions[234][1] - faceCenterPos[1]), 2),
+        // ) * 1.05; //왼쪽 볼 넓이
+        (positions[234][0] - faceCenterPos[0]) * 1.05;
       rightFaceWidth =
-        Math.sqrt(
-          Math.pow(Math.abs(positions[454][0] - faceCenterPos[0]), 2) +
-            Math.pow(Math.abs(positions[454][1] - faceCenterPos[1]), 2),
-        ) * 1.2; //오른쪽 볼 넓이
+        // Math.sqrt(
+        //   Math.pow(Math.abs(positions[454][0] - faceCenterPos[0]), 2) +
+        //     Math.pow(Math.abs(positions[454][1] - faceCenterPos[1]), 2),
+        // ) * 1.1; //오른쪽 볼 넓이
+        (positions[454][0] - faceCenterPos[0]) * 1.08;
     } else {
-      leftFaceWidth = -Math.sqrt(
-        Math.pow(Math.abs(positions[234][0] - faceCenterPos[0]), 2) +
-          Math.pow(Math.abs(positions[234][1] - faceCenterPos[1]), 2),
-      ); //왼쪽 볼 넓이
-      rightFaceWidth = Math.sqrt(
-        Math.pow(Math.abs(positions[454][0] - faceCenterPos[0]), 2) +
-          Math.pow(Math.abs(positions[454][1] - faceCenterPos[1]), 2),
-      ); //오른쪽 볼 넓이
+      leftFaceWidth =
+        //  -Math.sqrt(
+        //   Math.pow(Math.abs(positions[234][0] - faceCenterPos[0]), 2) +
+        //     Math.pow(Math.abs(positions[234][1] - faceCenterPos[1]), 2),
+        // ); //왼쪽 볼 넓이
+        (positions[234][0] - faceCenterPos[0]) * 1.1;
+      rightFaceWidth =
+        // Math.sqrt(
+        //   Math.pow(Math.abs(positions[454][0] - faceCenterPos[0]), 2) +
+        //     Math.pow(Math.abs(positions[454][1] - faceCenterPos[1]), 2),
+        // ); //오른쪽 볼 넓이
+        (positions[454][0] - faceCenterPos[0]) * 1.1;
     }
     // faceCenterPos[1] = faceCenterPos[1] + Math.abs(o1 * (faceWidth / 13))
     if (
@@ -87,20 +92,20 @@ export default class drawMask extends drawParent {
     ) {
       //완전 옆면을 보일 시에 볼의 좌표가 코를 넘어가기 때문에 길이를 고정해준다.
       leftFaceWidth = faceWidth * -0.3;
-      if (this.shortWidth) faceCenterPos[0] -= faceWidth * 0.15; //아이폰 13.4이상 중심점 조정
+      // if (this.shortWidth) faceCenterPos[0] -= faceWidth * 0.15; //아이폰 13.4이상 중심점 조정
     } else if (
       leftFaceWidth > faceWidth * 0.2 ||
       Math.abs(leftFaceWidth) <= faceWidth * 0.2
     ) {
       //완전 옆면을 보일 시에 볼의 좌표가 코를 넘어가기 때문에 길이를 고정해준다.
       leftFaceWidth = faceWidth * -0.3;
-      if (this.shortWidth) faceCenterPos[0] -= faceWidth * 0.1;
+      // if (this.shortWidth) faceCenterPos[0] -= faceWidth * 0.1;
     } else if (
       leftFaceWidth > faceWidth * 0.3 ||
       Math.abs(leftFaceWidth) <= faceWidth * 0.3
     ) {
       leftFaceWidth = faceWidth * -0.4;
-      if (this.shortWidth) faceCenterPos[0] -= faceWidth * 0.05;
+      // if (this.shortWidth) faceCenterPos[0] -= faceWidth * 0.05;
     } else if (
       leftFaceWidth > faceWidth * 0.5 ||
       Math.abs(leftFaceWidth) <= faceWidth * 0.5
@@ -114,22 +119,22 @@ export default class drawMask extends drawParent {
     ) {
       //완전 옆면을 보일 시에 볼의 좌표가 코를 넘어가기 때문에 길이를 고정해준다.
       rightFaceWidth = faceWidth * 0.3;
-      if (this.shortWidth) faceCenterPos[0] += faceWidth * 0.15;
+      // if (this.shortWidth) faceCenterPos[0] += faceWidth * 0.15;
     } else if (rightFaceWidth <= faceWidth * 0.2) {
       //완전 옆면을 보일 시에 볼의 좌표가 코를 넘어가기 때문에 길이를 고정해준다.
       rightFaceWidth = faceWidth * 0.3;
-      if (this.shortWidth) faceCenterPos[0] += faceWidth * 0.1;
+      // if (this.shortWidth) faceCenterPos[0] += faceWidth * 0.1;
     } else if (rightFaceWidth <= faceWidth * 0.3) {
       rightFaceWidth = faceWidth * 0.4;
-      if (this.shortWidth) faceCenterPos[0] += faceWidth * 0.05;
+      // if (this.shortWidth) faceCenterPos[0] += faceWidth * 0.05;
     } else if (rightFaceWidth <= faceWidth * 0.5) {
       rightFaceWidth = faceWidth * 0.5;
     }
-    if (this.shortWidth) {
-      //아이폰 13.4이상 회전시 길이 조정
-      if (o1 > 0) leftFaceWidth += Math.abs(o1 * (faceWidth * 0.2));
-      else rightFaceWidth += o1 * (faceWidth * 0.2);
-    }
+    // if (this.shortWidth) {
+    //   //아이폰 13.4이상 회전시 길이 조정
+    //   if (o1 > 0) leftFaceWidth += Math.abs(o1 * (faceWidth * 0.2));
+    //   else rightFaceWidth += o1 * (faceWidth * 0.2);
+    // }
 
     if (!this.isPC && !this.shortHeight && !this.shortWidth) {
       //안드로이드 기기 중심점 조정
@@ -157,6 +162,15 @@ export default class drawMask extends drawParent {
       noseToBottom + afterRotateY,
     );
     this.ctx.restore();
+    // positions.forEach((i, _idx) => {
+    //   //x축 y축 모두 얼굴위치와 같다면 count업 전부 카운트가 올라가면 얼굴과 딱 맞게 된 것
+    //   this.ctx?.beginPath();
+    //   this.ctx?.arc(i[0], i[1], 2, Math.PI * 2, 0, false);
+    //   this.ctx?.closePath();
+    //   this.ctx?.fill();
+
+    //   this.ctx.stroke();
+    // });
   }
 }
 

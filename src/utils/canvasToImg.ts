@@ -13,7 +13,6 @@ const canvasToImg = (canvas: any): Blob => {
   const arr: any = [];
   [...blobBin].forEach((_i, idx) => arr.push(blobBin.charCodeAt(idx)));
   const file = new Blob([new Uint8Array(arr)], { type: 'image/png' });
-  console.log(file);
   return file;
 };
 

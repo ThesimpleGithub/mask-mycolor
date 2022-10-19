@@ -9,49 +9,61 @@ const Div = styled.div`
   position: relative;
   margin-top: 20px;
   margin-bottom: 20px;
-  width: 122px;
-  box-sizing: content-box;
-  height: 122px;
+  width: 150px;
+  height: 150px;
   display: inline-flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   color: black;
   font-size: 11px;
+  margin-left: 3px;
   cursor: pointer;
-  @media (max-width: 720px) {
+  @media (orientation: portrait) and (max-width: 720px),
+    (orientation: landscape) and (max-height: 720px) {
     font-size: 1.52;
-    width: 21vw;
-    height: 21vw;
-    margin-top: 2.8vw;
-    margin-bottom: 2.8vw;
+    width: 21vmin;
+    height: 21vmin;
+    margin-top: 2.8vmin;
+    margin-bottom: 2.8vmin;
   }
   ${theme.borderRadius}
   z-index: 100003;
 `;
 const Img = styled.img`
   width: 110px;
+  height: 80px;
   margin-top: 5px;
-  @media (max-width: 720px) {
-    width: 15.28vw;
+  /* @media all and ((orientation: portrait) and (max-width: 720px)),
+    ((orientation: landscape) and (max-height: 720px)) {
+    width: 15.28vmin;
+  } */
+  @media (orientation: portrait) and (max-width: 720px),
+    (orientation: landscape) and (max-height: 720px) {
+    width: 15.28vmin;
+    height: 12vmin;
   }
 `;
 
 const Shopping = styled.button`
   background: none;
+  color: black;
   position: absolute;
-  top: 3px;
-  right: 3px;
-  @media (max-width: 720px) {
-    font-size: 3.5vw;
+  padding: 0;
+  top: 5px;
+  right: 5px;
+  @media (orientation: portrait) and (max-width: 720px),
+    (orientation: landscape) and (max-height: 720px) {
+    font-size: 3.5vmin;
   }
-  font-size: 20px;
+  font-size: 26px;
 `;
 
 const Span = styled.span`
   font-size: 13px;
-  @media (max-width: 720px) {
-    font-size: 1.8vw;
+  @media ((orientation: portrait) and (max-width: 720px)),
+    ((orientation: landscape) and (max-height: 720px)) {
+    font-size: 1.8vmin;
   }
 `;
 
@@ -71,18 +83,18 @@ const MaskComponent = ({
   const maskToggle = (node: { currentTarget: HTMLDivElement }) => {
     handleChangeMask(idx);
     const beforeSelect = document.getElementById('selectedMask');
-    beforeSelect!.style.border = 'none';
+    beforeSelect!.style.boxShadow = 'none';
     // beforeSelect!.style.background = 'rgba(230,230,230,0.2)';
     beforeSelect!.id = '';
     const target = node.currentTarget;
     target.id = 'selectedMask';
-    target.style.border = '3px solid pink';
+    target.style.boxShadow = '0 0 0pt 2pt #db4c64';
     // target.style.background = 'lightblue';
   };
 
   return (
     <Div
-      style={{ border: selected ? '3px solid pink' : '' }}
+      style={{ boxShadow: selected ? '0 0 0pt 2.5pt #db4c64' : '' }}
       id={selected ? 'selectedMask' : ''}
       className="maskWrapper"
       onClick={maskToggle}
@@ -90,12 +102,12 @@ const MaskComponent = ({
       <Shopping
         onClick={e => {
           e.stopPropagation();
-          window.open('naver.com');
+          window.open(maskData.href);
         }}
       >
         <FaShoppingCart />
       </Shopping>
-      <Img src={`/images/${maskData.src}`} />
+      <Img data-src={`images/${maskData.src}`} className="lazy" />
       {/* <Btn
         // variant="contained"
         color="primary"

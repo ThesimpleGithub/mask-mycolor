@@ -8,7 +8,7 @@
     "dev": "vite --host",
     "build": "vite build",
     "deploy": "gh-pages -d dist",
-    "predeploy": "npm run build && cp CNAME dist",
+    "predeploy": "npm run build && cp CNAME dist && cp privacy.html dist",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -16,15 +16,17 @@
     "@tensorflow/tfjs-backend-webgl": "^2.4.0",
     "@tensorflow/tfjs-converter": "^2.4.0",
     "@tensorflow/tfjs-core": "^2.4.0",
+    "@types/node": "18.8.2",
+    "@use-gesture/react": "10.2.20",
     "axios": "0.27.2",
     "exif-js": "2.3.0",
     "gh-pages": "4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "4.4.0",
-    "react-slick": "0.29.0",
-    "slick-carousel": "1.8.1",
-    "styled-components": "5.3.5"
+    "react-indiana-drag-scroll": "2.2.0",
+    "styled-components": "5.3.5",
+    "vite-plugin-mkcert": "1.10.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.17",

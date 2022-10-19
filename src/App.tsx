@@ -22,16 +22,18 @@ import UploadMode from './components/UploadMode';
 
 const MainBody = styled.section`
   display: flex;
+  opacity: 0;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   background-size: cover;
   background-position: center;
   background-image: url('/images/background.svg');
   overflow-y: hidden;
+  transition: opacity 1s;
   @media (max-height: 568px) {
     height: unset;
-    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
     justify-content: unset;
     padding-bottom: 60px;
   }
@@ -69,15 +71,23 @@ const Wrapper = styled.div`
 
 const App = () => {
   const [streamState, setStream] = useState<MediaStream>();
+
+  const resizeHeight = () =>
+    document.documentElement.style.setProperty(
+      '--vh',
+      `${window.innerHeight * 0.01}px`,
+    );
+
   useEffect(() => {
-    document.body.parentElement!.style.fontSize = '10px';
     const img = new Image();
     img.src = `/images/background.svg`;
     img.onload = () => {
       const body = document.getElementById('mainBody');
       body!.style.backgroundImage = `url(${img.src})`;
-      body!.style.display = 'flex';
+      body!.style.opacity = '1';
     };
+    resizeHeight();
+    window.addEventListener('resize', resizeHeight);
   }, []);
 
   return (

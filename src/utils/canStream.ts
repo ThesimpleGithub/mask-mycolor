@@ -3,13 +3,8 @@ import ImageUpload from './ImageUpload';
 export default async function canStream(
   faceBoard: string,
 ): Promise<void | MediaStream> {
-  // const video = document.getElementById('video') as HTMLVideoElement;
-  // const loading = document.getElementById('ML_Loading') as HTMLDivElement;
-  // document.getElementById('testExplain')!.innerText =
-  //   '인공지능을 불러오고 있습니다.';
   const ua = navigator.userAgent;
   let videoStream;
-  // loading.style.display = 'block';
 
   if (/fb/i.test(ua) && !/fbios/i.test(ua)) {
     let floatOs = 0;
@@ -44,9 +39,13 @@ export default async function canStream(
     //기기 정보를 받아올때 크롬에는 사파리 크롬이 다 적혀있고, 사파리에는 사파리만 적혀있으므로 사파리를 특정하기 위해서는
     //사파리 문자를 포함하고 크롬 문자를 포함하지않는 조건을 충족시켜줘야한다
     try {
+      const ratio = (innerWidth * 4) / 3;
       if (ua.indexOf('Safari') != -1 && ua.indexOf('Chrome') == -1) {
         return await navigator.mediaDevices.getUserMedia({
           video: {
+            aspectRatio: 1.33,
+            // width: innerWidth,
+            // height: ratio,
             facingMode: 'user',
             frameRate: {
               ideal: 60,
@@ -57,8 +56,9 @@ export default async function canStream(
         // Not adding `{ audio: true }` since we only want video now
         return await navigator.mediaDevices.getUserMedia({
           video: {
-            width: { min: 0, ideal: screen.width },
-            height: { min: 0, ideal: screen.height },
+            aspectRatio: 1.33,
+            // width: innerWidth,
+            // height: ratio,
             frameRate: {
               ideal: 60,
             },
@@ -139,6 +139,7 @@ export default async function canStream(
   }
 
   function noCam(err = 'default') {
+    document.getElementById('testExplain')!.innerText = err;
     // loading.style.display = 'none';
     if (faceBoard != 'scan') {
       ImageUpload(faceBoard);
@@ -181,5 +182,4 @@ export default async function canStream(
       ImageUpload(faceBoard);
     }
   }
-  console.log(videoStream);
 }

@@ -35,7 +35,6 @@ export default class canvasRotate {
     this.loading = document.getElementById('ML_Loading');
     this.canvasContext = this.canvas.getContext('2d');
     this.mode = mode;
-    console.log(mode);
     if (this.mode == 'mask') this.maskImgLoad();
     else {
       this.rotate2(this.image, true);
@@ -83,11 +82,9 @@ export default class canvasRotate {
   }
 
   async rotate2(image: any, predict: boolean) {
-    console.log(image);
     const ua = navigator.userAgent;
 
     EXIF.getData(image, async () => {
-      console.log(image);
       const orientation = EXIF.getTag(image, 'Orientation'); //회전도 구하기
       if (/ipad|iphone/i.test(ua)) {
         //ios환경
@@ -226,7 +223,6 @@ export default class canvasRotate {
           this.canvas.height,
         );
 
-      console.log(predict);
       if (predict) this.rotate();
     });
   }

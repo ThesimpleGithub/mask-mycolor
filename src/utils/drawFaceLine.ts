@@ -2,15 +2,13 @@ import axios from 'axios';
 import drawParent from './drawParent';
 import canvasToImg from './canvasToImg';
 import { Dispatch, SetStateAction } from 'react';
+import { personalColor } from 'components/VideoCanvas';
 export class drawFaceLine extends drawParent {
   PI: number = Math.PI * 2;
   dotPos!: number[];
   radius: number;
   isDetected = false;
   drawLineIdx = 0;
-  progressBar: HTMLElement;
-  percent: HTMLElement;
-  progressContainer: HTMLElement;
   isCompleted = false;
   progressCnt: number;
   constructor(
@@ -18,14 +16,9 @@ export class drawFaceLine extends drawParent {
     private setExplain: Dispatch<SetStateAction<string>>,
     private setLoading: Dispatch<SetStateAction<boolean>>,
     private setIsCalculating: Dispatch<SetStateAction<boolean>>,
+    private setColorData: Dispatch<SetStateAction<personalColor>>,
   ) {
     super();
-    this.progressBar = document.getElementById('progressBar') as HTMLElement;
-    this.percent = document.getElementById('progressPercent') as HTMLElement;
-    this.progressContainer = document.getElementById(
-      'progressContainer',
-    ) as HTMLElement;
-    this.ctx.fillStyle = '#FFFFFF';
     this.radius = 2;
     this.progressCnt = 0;
     this.dotPos = [
@@ -36,20 +29,10 @@ export class drawFaceLine extends drawParent {
     ];
   }
 
-  progress() {
-    const add = Math.random() * 3;
-    this.progressCnt = Number((this.progressCnt + add).toFixed(2));
-    if (this.progressCnt > 100) this.progressCnt = 100;
-    this.progressContainer.style.display = 'inline-flex';
-    this.progressBar.style.width = this.progressCnt + '%';
-    this.percent.innerText = this.progressCnt + '%';
-  }
-
   draw(positions: number[][]): void {
-    this.setExplain('퍼스널컬러를 측정 중입니다.');
+    this.setExplain('퍼스널컬러를 측정 중이에요!');
     this.ctx!.strokeStyle = 'rgba(255,255,255,.5)';
-    this.ctx!.lineWidth = 3;
-    const loading = document.getElementById('ML_Loading');
+    this.ctx!.lineWidth = 1;
     this.drawLineIdx = 1;
     this.progressCnt += 1;
     if (this.progressCnt <= 20) {
@@ -75,11 +58,18 @@ export class drawFaceLine extends drawParent {
       form.append('file', canvasToImg(false));
       this.setLoading(true);
       this.setIsCalculating(true);
-      axios.post('/remove/sendImg', form).then(res => {
-        this.setLoading(false);
-        this.setScanEnd(true);
-        this.setIsCalculating(false);
-      });
+      axios
+        .post('/remove/sendImg', form)
+        .then(res => {
+          this.setLoading(false);
+          this.setScanEnd(true);
+          this.setIsCalculating(false);
+          this.setColorData({
+            result: res.data.result,
+            resultKor: res.data.resultKor,
+          });
+        })
+        .catch(err => alert('에러가 발생했습니다. 다시 시도해주세요.'));
     }
   }
 
