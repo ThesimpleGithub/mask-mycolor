@@ -8507,7 +8507,6 @@ PERFORMANCE OF THIS SOFTWARE.
   `,c=ge.button`
     border-radius: 16px;
     padding: 5px 10px;
-    padding-top: 3px;
     background-color: ${d=>d.isSelected?"black":"white"};
     color: ${d=>d.isSelected?"white":"black"};
     margin-right: 10px;
