@@ -1,5 +1,7 @@
 import * as faceLandmarksDetection from '@tensorflow-models/face-landmarks-detection';
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import '@tensorflow/tfjs-backend-cpu';
+
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { drawFaceLine } from '../utils/drawFaceLine';
 import drawMask from '../utils/drawMask';
@@ -13,9 +15,14 @@ import {
 } from '../datas/maskData';
 import ModalPortal from './Portal';
 import ML_Loading from './ML_Loading';
-import { BsFillQuestionCircleFill } from 'react-icons/bs';
+import {
+  BsFillQuestionCircleFill,
+  BsArrowsExpand,
+  BsCamera,
+} from 'react-icons/bs';
 import { IoMdRefreshCircle } from 'react-icons/io';
 import lazyLoading from '../utils/lazyLoading';
+import UtilButton from './UtilButton';
 export interface Mask {
   /**마스크색상 */
   color: string;
@@ -40,50 +47,84 @@ export interface personalColor {
 const Wrapper = styled.div`
   white-space: pre-wrap;
   background: rgb(230, 230, 230);
-  padding: 1.5vh 2vh;
+  padding: 1.5vh;
   color: black;
-  width: 100%;
   font-size: 1.7vh;
   margin-top: 0.5vh;
-  margin-bottom: 1vh;
+  margin-bottom: 1vmin;
   text-align: center;
   position: relative;
-  left: 50%;
-  transform: translateX(-50%);
   white-space: nowrap;
   @media (max-width: 720px) {
-    padding: 2vw 4.17vw;
+    padding: 2vw;
     font-size: 2.42vw;
   }
   ${theme.borderRadius}
 `;
 
 const VideoCss = css`
-  width: 100vw;
-  height: 100vh;
+  /* width: 100vw; */
   position: fixed;
   top: 0;
-  transform: scale(-1, 1);
+  /* transform: scale(-1, 1); */
   transition: 0.125s linear;
 `;
 const UI_Wrapper = styled.div`
-  z-index: 100002;
+  width: 100vw;
+  position: relative;
   display: flex;
   justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  max-width: 700px;
+  align-items: flex-end;
+  flex-direction: row;
+`;
+const BtnWrapper = styled.div`
+  position: absolute;
+  right: 20px;
+  bottom: 55px;
+  font-size: 29px;
+  button:nth-child(2) {
+    margin-bottom: 1vmin;
+    margin-top: 1vmin;
+  }
+  button {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 100px;
+    font-size: 29px;
+    position: relative;
+    background: rgb(62 62 62 / 74%);
+    color: #ffffff;
+    :active {
+      background: rgb(62 62 62 / 90%);
+    }
+  }
+  @media (max-width: 720px) {
+    bottom: 9vmin;
+    right: 2.77vmin;
+    button {
+      font-size: 5.22vmin;
+      padding: 2vmin;
+    }
+  }
 `;
 const Video = styled.video`
   opacity: 0;
+  max-width: 100vw;
   ${VideoCss}
 `;
 const Canvas = styled.canvas`
+  height: 100%;
+  width: auto;
   z-index: 100001;
-  max-width: 900px;
   ${VideoCss}
 `;
-
+//803 969  720 868
+//1430 969 1062 720
+//1282 969 952 720
+//1044 969 775 720
+//923 969 720 755
+//314 969 720 2221
 const Container = styled.div`
   display: flex;
   height: calc(var(--vh, 1vh) * 100);
@@ -91,6 +132,15 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
+`;
+
+const BottomWrapper = styled.div<{ yPos: number }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.5s;
+  z-index: 100003;
+  transform: translateY(${props => props.yPos}px);
 `;
 
 const topBtnCss = css`
@@ -104,12 +154,14 @@ const topBtnCss = css`
   font-size: 23px;
   border-radius: 20px;
   top: 10px;
+  height: 40px;
   background-color: #db4c64;
   @media (orientation: portrait) and (max-width: 720px),
     (orientation: landscape) and (max-height: 720px) {
     font-size: 3.5vmin;
     border-radius: 3vmin;
     padding: 1.3vmin 3vmin;
+    height: 7vmin;
   }
   svg {
     margin-left: 5px;
@@ -132,7 +184,7 @@ const ColorLink = styled.button`
   right: 10px;
   ${topBtnCss}
 `;
-
+const SlideBtn = styled.button``;
 interface props {
   drawMethod: string;
   stream: MediaStream;
@@ -140,11 +192,12 @@ interface props {
 
 const VideoCanvas = ({ drawMethod, stream }: props) => {
   const [explain, setExplain] =
-    useState<string>('인공지능을 불러오는 중이예요');
-
+    useState<string>('인공지능을 불러오는 중이에요');
+  console.log('root render');
   const [isScanEnd, setScanEnd] = useState<boolean>(false);
   const [maskData, setMaskData] = useState<maskType[]>(maskObj[0].list);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [bottomY, setBottomY] = useState<number>(0);
   const [isCalculated, setIsCalculating] = useState<boolean>(false);
   const [colorData, setColorData] = useState<personalColor>({
     result: '',
@@ -152,15 +205,18 @@ const VideoCanvas = ({ drawMethod, stream }: props) => {
   });
 
   const selectedMask = useRef<maskType>(maskObj[0].list[0]);
-  const handleChangeMaskData = (idx: number) => {
+  const handleChangeMaskData = useCallback((idx: number) => {
     selectedMask.current = maskObj[idx].list[0];
     setMaskData(maskObj[idx].list);
-  };
+  }, []);
 
-  const handleChangeMask = (idx: number) => {
-    (drawCanvas.current! as drawMask).setMaskImage(maskData[idx]);
-    selectedMask.current = maskData[idx];
-  };
+  const handleChangeMask = useCallback(
+    (idx: number) => {
+      (drawCanvas.current! as drawMask).setMaskImage(maskData[idx]);
+      selectedMask.current = maskData[idx];
+    },
+    [maskData],
+  );
 
   const canvas = useRef<HTMLCanvasElement>(null);
   const video = useRef<HTMLVideoElement>(null);
@@ -175,32 +231,36 @@ const VideoCanvas = ({ drawMethod, stream }: props) => {
     (drawCanvas.current! as drawMask).draw(positions);
   };
   const animate = async () => {
-    const predictions = await model.current!.estimateFaces({
-      input: video.current!,
-      returnTensors: false,
-      flipHorizontal: false,
-      predictIrises: false,
-    });
-
     try {
+      const predictions = await model.current!.estimateFaces({
+        input: video.current!,
+        returnTensors: false,
+        flipHorizontal: false,
+        predictIrises: false,
+      });
+
       drawCanvas.current?.clear();
-      if (predictions) {
+      if (predictions[0]) {
         const positions = predictions![0]?.scaledMesh;
         if (positions) {
           if (!isScanEnd) scanDraw(positions);
           else maskDraw(positions);
         }
+      } else {
+        setIsLoading(false);
+        setExplain('얼굴이 감지되지 않았어요. 카메라에 얼굴을 비춰주세요.');
       }
+
       const srcObj: any = video.current!.srcObject;
       if (srcObj.active) requestAnimationFrame(animate);
-    } catch (error) {
-      alert(error);
+    } catch (error: any) {
+      alert('에러가 발생했습니다. 다시 시도해 주세요.');
     }
   };
 
   useEffect(() => {
-    video.current!.srcObject = stream;
     try {
+      video.current!.srcObject = stream;
       video.current!.play().then(() => {
         drawCanvas.current = new drawFaceLine(
           setScanEnd,
@@ -220,12 +280,11 @@ const VideoCanvas = ({ drawMethod, stream }: props) => {
           })
           .then(m => {
             model.current = m;
-            setIsLoading(false);
             animate();
           });
       });
     } catch (error: any) {
-      setExplain(error);
+      alert('before detected ');
     }
   }, []);
 
@@ -245,12 +304,14 @@ const VideoCanvas = ({ drawMethod, stream }: props) => {
       );
     }
   }, [isScanEnd]);
-
+  useEffect(() => {}, []);
   useEffect(() => {
-    lazyLoading();
     if (isScanEnd) {
       (drawCanvas.current! as drawMask).setMaskImage(maskData[0]);
     }
+    setTimeout(() => {
+      lazyLoading();
+    }, 0);
   }, [maskData]);
   return (
     <Container>
@@ -281,17 +342,41 @@ const VideoCanvas = ({ drawMethod, stream }: props) => {
       >
         {colorData.resultKor || '퍼스널컬러'} <BsFillQuestionCircleFill />
       </ColorLink>
-      <UI_Wrapper>
-        <Wrapper id="testExplain">{explain}</Wrapper>
-      </UI_Wrapper>
-      <div ref={slider}>
-        <MaskSlider
-          maskDataArr={maskData}
-          selectedMask={selectedMask.current}
-          handleChangeMaskData={handleChangeMaskData}
-          handleChangeMask={handleChangeMask}
-        />
-      </div>
+      <BottomWrapper yPos={bottomY}>
+        <UI_Wrapper>
+          <Wrapper id="testExplain">{explain}</Wrapper>
+          <BtnWrapper>
+            <button
+              onClick={() => {
+                const link = document.createElement('a');
+                link.download = new Date() + '마스크착용.png';
+                link.href = canvas.current!.toDataURL();
+                link.click();
+                link.remove();
+              }}
+            >
+              <BsCamera />
+            </button>
+            <button
+              onClick={() => {
+                const height = slider.current!.clientHeight;
+                setBottomY(bottomY ? 0 : height);
+              }}
+            >
+              <BsArrowsExpand />
+            </button>
+          </BtnWrapper>
+          {/* <UtilButton /> */}
+        </UI_Wrapper>
+        <div ref={slider}>
+          <MaskSlider
+            maskDataArr={maskData}
+            selectedMask={selectedMask}
+            handleChangeMaskData={handleChangeMaskData}
+            handleChangeMask={handleChangeMask}
+          />
+        </div>
+      </BottomWrapper>
     </Container>
   );
 };

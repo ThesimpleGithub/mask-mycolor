@@ -36,6 +36,7 @@ export class drawFaceLine extends drawParent {
     this.drawLineIdx = 1;
     this.progressCnt += 1;
     if (this.progressCnt <= 20) {
+      this.setLoading(false);
       this.dotPos.forEach((i, _idx) => {
         //x축 y축 모두 얼굴위치와 같다면 count업 전부 카운트가 올라가면 얼굴과 딱 맞게 된 것
         this.ctx?.beginPath();
@@ -69,7 +70,7 @@ export class drawFaceLine extends drawParent {
             resultKor: res.data.resultKor,
           });
         })
-        .catch(err => alert('에러가 발생했습니다. 다시 시도해주세요.'));
+        .catch(err => alert('에러가 발생했습니다. 다시 시도해 주세요.'));
     }
   }
 

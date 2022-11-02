@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 // import Button from '@material-ui/core/Button';
-import { ReactElement } from 'react';
+import { memo, ReactElement, useEffect, useRef } from 'react';
 import { maskType } from '../datas/maskData';
 import theme from '../utils/theme';
 import { RiShoppingBagFill } from 'react-icons/ri';
@@ -91,7 +91,6 @@ const MaskComponent = ({
     target.style.boxShadow = '0 0 0pt 2pt #db4c64';
     // target.style.background = 'lightblue';
   };
-
   return (
     <Div
       style={{ boxShadow: selected ? '0 0 0pt 2.5pt #db4c64' : '' }}
@@ -107,7 +106,11 @@ const MaskComponent = ({
       >
         <FaShoppingCart />
       </Shopping>
-      <Img data-src={`images/${maskData.src}`} className="lazy" />
+      <Img
+        alt={`마스크 이미지 ${maskData.src}`}
+        data-src={`${import.meta.env.VITE_PATH}/images/${maskData.src}`}
+        className="lazy"
+      />
       {/* <Btn
         // variant="contained"
         color="primary"
@@ -123,4 +126,4 @@ const MaskComponent = ({
   );
 };
 
-export default MaskComponent;
+export default memo(MaskComponent);

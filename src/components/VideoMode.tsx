@@ -22,7 +22,10 @@ const VideoMode = ({
     >
       <MainBtn.MiddleWrapper>
         <MainBtn.ImgWrapper>
-          <MainBtn.CamImg alt="camera 카메라" src={`/images/camera.svg`} />
+          <MainBtn.CamImg
+            alt="camera 카메라"
+            src={`${import.meta.env.VITE_PATH}/images/camera.svg`}
+          />
         </MainBtn.ImgWrapper>
         <MainBtn.TextWrapper>
           <MainBtn.H1>실시간 측정 방식</MainBtn.H1>

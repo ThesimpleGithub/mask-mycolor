@@ -39,31 +39,27 @@ export default async function canStream(
     //기기 정보를 받아올때 크롬에는 사파리 크롬이 다 적혀있고, 사파리에는 사파리만 적혀있으므로 사파리를 특정하기 위해서는
     //사파리 문자를 포함하고 크롬 문자를 포함하지않는 조건을 충족시켜줘야한다
     try {
-      const ratio = (innerWidth * 4) / 3;
+      const afterHeight = innerHeight;
+      const width =
+        innerWidth < afterHeight ? 720 : (innerWidth * 720) / afterHeight;
+      const height =
+        innerWidth > afterHeight ? 720 : (afterHeight * 720) / innerWidth;
+      const option = {
+        width: /mobile/i.test(ua) ? height : width,
+        height: /mobile/i.test(ua) ? width : height,
+        frameRate: {
+          ideal: 60,
+        },
+        facingMode: 'user',
+      };
       if (ua.indexOf('Safari') != -1 && ua.indexOf('Chrome') == -1) {
         return await navigator.mediaDevices.getUserMedia({
-          video: {
-            aspectRatio: 1.33,
-            // width: innerWidth,
-            // height: ratio,
-            facingMode: 'user',
-            frameRate: {
-              ideal: 60,
-            },
-          },
+          video: option,
         });
       } else {
         // Not adding `{ audio: true }` since we only want video now
         return await navigator.mediaDevices.getUserMedia({
-          video: {
-            aspectRatio: 1.33,
-            // width: innerWidth,
-            // height: ratio,
-            frameRate: {
-              ideal: 60,
-            },
-            facingMode: 'user',
-          },
+          video: option,
         });
       }
     } catch (error: any) {

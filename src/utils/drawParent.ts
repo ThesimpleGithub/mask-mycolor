@@ -21,8 +21,10 @@ export default class drawParent {
     this.canvas.width = this.video.videoWidth;
     this.canvas.height = this.video.videoHeight;
     // this.canvas.style.width = this.video.videoWidth + 'px';
-    this.canvas.style.height = innerHeight - slider.clientHeight + 3 + 'px';
+    // this.canvas.style.height = innerHeight - slider.clientHeight + 3 + 'px';
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
+    this.ctx.translate(this.canvas.width, 0);
+    this.ctx.scale(-1, 1);
     this.ctx.fillStyle = '#FFFFFF';
   }
 }

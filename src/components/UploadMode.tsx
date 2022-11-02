@@ -20,7 +20,10 @@ const UploadMode = (): ReactElement => {
     >
       <MainBtn.MiddleWrapper>
         <MainBtn.ImgWrapper>
-          <MainBtn.CamImg alt="camera 카메라" src={`/images/upload.svg`} />
+          <MainBtn.CamImg
+            alt="업로드 버튼"
+            src={`${import.meta.env.VITE_PATH}/images/upload.svg`}
+          />
         </MainBtn.ImgWrapper>
         <MainBtn.TextWrapper>
           <MainBtn.H1>사진 업로드 방식</MainBtn.H1>

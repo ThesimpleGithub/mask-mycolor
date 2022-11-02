@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import styled from 'styled-components';
 
-const P = styled.p`
+const P = styled.h1`
   font-size: 3.3vh;
   margin-bottom: 1.56vh;
   font-weight: 400;

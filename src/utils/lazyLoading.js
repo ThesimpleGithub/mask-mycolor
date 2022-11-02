@@ -3,15 +3,18 @@ export default function lazyLoading() {
   let lazyload;
   if ('IntersectionObserver' in window) {
     lazyloadImages = document.querySelectorAll('.lazy');
-    var imageObserver = new IntersectionObserver(function (entries, observer) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          var image = entry.target;
-          image.src = image.dataset.src;
-          image.classList.add('afterLoad');
-        }
-      });
-    });
+    var imageObserver = new IntersectionObserver(
+      function (entries, observer) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            var image = entry.target;
+            image.src = image.dataset.src;
+            image.classList.add('afterLoad');
+          }
+        });
+      },
+      { threshold: 0.3 },
+    );
 
     lazyloadImages.forEach(function (image) {
       imageObserver.observe(image);

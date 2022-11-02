@@ -1,4 +1,4 @@
-import { useEffect, ReactElement, useState } from 'react';
+import { useEffect, ReactElement, useState, memo } from 'react';
 import MaskComponent from './MaskComponent';
 import styled from 'styled-components';
 import { maskObj, maskType } from '../datas/maskData';
@@ -9,7 +9,7 @@ interface props {
   maskDataArr: maskType[];
   handleChangeMaskData(arg0: number): void;
   handleChangeMask(arg0: number): void;
-  selectedMask: maskType;
+  selectedMask: React.MutableRefObject<maskType>;
 }
 
 const MaskSlider = ({
@@ -18,8 +18,8 @@ const MaskSlider = ({
   handleChangeMask,
   selectedMask,
 }: props): ReactElement => {
-  const [slideUnit, setSlideUnit] = useState<number>();
-
+  // const [slideUnit, setSlideUnit] = useState<number>();
+  console.log('render');
   const menuElemArr = useRef<HTMLButtonElement[]>([]);
   const isNeedScroll = useRef<boolean>(false);
   const scrollX = useRef<number>(0);
@@ -34,7 +34,7 @@ const MaskSlider = ({
     z-index: 100003;
     position: relative;
     padding: 0px 20px;
-    max-width: 900px;
+    text-align: center;
     padding-top: 15px;
     @media (orientation: portrait) and (max-width: 720px),
       (orientation: landscape) and (max-height: 720px) {
@@ -56,15 +56,6 @@ const MaskSlider = ({
     }
   `;
 
-  useEffect(() => {
-    if (window.innerWidth > 720) setSlideUnit(720 / 150);
-    else setSlideUnit(window.innerWidth / (window.innerWidth * 0.25));
-
-    window.addEventListener('resize', () => {
-      if (window.innerWidth > 720) setSlideUnit(720 / 150);
-      else setSlideUnit(window.innerWidth / (window.innerWidth * 0.25));
-    });
-  }, []);
   useEffect(() => {
     const selectedIdx = maskObj.findIndex(value => value.list == maskDataArr);
     const selectedElem = menuElemArr.current[selectedIdx];
@@ -100,6 +91,7 @@ const MaskSlider = ({
       <ScrollDiv>
         {maskObj.map((obj, idx) => (
           <MenuSpan
+            key={obj.name}
             ref={el => (menuElemArr.current[idx] = el!)}
             onClick={e => handleMenuClick(e, idx)}
             isSelected={maskObj[idx].list == maskDataArr}
@@ -113,10 +105,9 @@ const MaskSlider = ({
           return (
             <MaskComponent
               maskData={maskData}
-              key={idx}
               idx={idx}
               handleChangeMask={handleChangeMask}
-              selected={maskDataArr.indexOf(selectedMask) === idx}
+              selected={maskDataArr.indexOf(selectedMask.current) === idx}
             />
           );
         })}
@@ -138,4 +129,4 @@ const MaskSlider = ({
   );
 };
 
-export default MaskSlider;
+export default memo(MaskSlider);

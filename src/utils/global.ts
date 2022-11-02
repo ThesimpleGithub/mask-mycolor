@@ -64,6 +64,10 @@ html,body{
   .afterLoad{
     visibility : visible !important;
   }
+  button{
+    transition: all .5s;
+    -webkit-tap-highlight-color : transparent !important;
+  }
   p{
     margin : 0;
   }

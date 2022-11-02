@@ -28,7 +28,7 @@ const MainBody = styled.section`
   height: calc(var(--vh, 1vh) * 100);
   background-size: cover;
   background-position: center;
-  background-image: url('/images/background.svg');
+  background-image: url(${import.meta.env.VITE_PATH}/images/background.svg);
   overflow-y: hidden;
   transition: opacity 1s;
   @media (max-height: 568px) {
