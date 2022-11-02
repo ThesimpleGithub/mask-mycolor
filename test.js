@@ -4,7 +4,7 @@ for (let i = 0; i < 1000000; i++) {
   map.set(i, 0);
 }
 
-//데이터 생성 후
+//데이터 생성 후z
 
 function test1() {
   for (let i = 0; i < 1000000; i++) {
