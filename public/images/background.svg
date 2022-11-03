@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="사각형_2" data-name="사각형 2" width="1920" height="1080" transform="translate(792 -3248)" fill="#fff" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+    <radialGradient id="radial-gradient" cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffb700"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="radial-gradient-2" cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ff3d84"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="radial-gradient-3" cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#0fe"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <g id="background" transform="translate(-792 3248)" clip-path="url(#clip-path)">
+    <g id="그룹_1" data-name="그룹 1" transform="translate(1383.97 -3499.751)">
+      <circle id="타원_17" data-name="타원 17" cx="1600.017" cy="1600.017" r="1600.017" transform="translate(-2192.853 224.182)" fill="url(#radial-gradient)"/>
+      <circle id="타원_18" data-name="타원 18" cx="1272.017" cy="1272.017" r="1272.017" transform="translate(-967.429 -1379.835)" fill="url(#radial-gradient-2)" style="mix-blend-mode: multiply;isolation: isolate"/>
+      <circle id="타원_19" data-name="타원 19" cx="1173.424" cy="1173.424" r="1173.424" transform="translate(28.588 460.291)" fill="url(#radial-gradient-3)"/>
+    </g>
+  </g>
+</svg>
