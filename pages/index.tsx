@@ -80,7 +80,7 @@ const App = () => {
   return (
     <MainBody id="mainBody">
       {/* <MetaTag />
-      <Router /> */}
+      <Router />*/}
       {/* 테스트 들어가기전 ui */}
       {streamState ? (
         <VideoCanvas drawMethod="scan" stream={streamState} />
